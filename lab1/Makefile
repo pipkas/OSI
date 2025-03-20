@@ -25,4 +25,4 @@ $(PROGRAM): $(OBJS)        # PROGRAM зависит от OBJS
 
 # Очистка временных файлов
 clean:
-	m -f $(OBJS) $(PROGRAM)  
+	rm -f $(OBJS) $(PROGRAM)  
