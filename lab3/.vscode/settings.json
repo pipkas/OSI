@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "reverse_string.h": "c",
+        "text_processing.h": "c",
+        "fcntl.h": "c"
+    }
+}
