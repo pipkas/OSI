@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
         return MY_ERROR;
     }
 
-    if (S_ISDIR(source_stat.st_mode) != SUCCESS) {
+    if (!S_ISDIR(source_stat.st_mode)) {
         fprintf(stderr, "Error: input argument is not a directory\n");
         return MY_ERROR;
     }

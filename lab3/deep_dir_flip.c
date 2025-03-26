@@ -29,7 +29,7 @@ static char flip_element(struct dirent *entry, char* cur_dir_path_name, char* fl
         return MY_ERROR;
     }
 
-    if ((S_ISDIR(st.st_mode) != SUCCESS) && (S_ISREG(st.st_mode) != SUCCESS))
+    if (!S_ISDIR(st.st_mode) && !S_ISREG(st.st_mode))
         return 0;
     
     char reversed_name[len_name + 1];
@@ -39,10 +39,10 @@ static char flip_element(struct dirent *entry, char* cur_dir_path_name, char* fl
     char dest_path [strlen(flip_dir_path_name) + len_name + 2];
     snprintf(dest_path, sizeof(dest_path), "%s/%s", flip_dir_path_name, reversed_name);
 
-    if (S_ISDIR(st.st_mode) == SUCCESS)
+    if (S_ISDIR(st.st_mode))
         is_error = deep_dir_flip(src_path, dest_path);
         
-    if (S_ISREG(st.st_mode) == SUCCESS)
+    if (S_ISREG(st.st_mode))
         is_error = copy_file_reversed(src_path, dest_path); 
 
     if (is_error == MY_ERROR)
