@@ -3,6 +3,8 @@
 const char MY_ERROR = 1;
 const int SYS_ERROR = -1;
 const char SUCCESS = 1;
+const unsigned int DIR_PERMISSION = 0755;
+const unsigned int FILE_PERMISSION = 0644;
 
 char* reverse_string(char *str, int str_len);
 void make_flip_dir_path(char* cur_dir_path, char* flip_dir_path);

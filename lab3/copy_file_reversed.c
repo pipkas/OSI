@@ -3,10 +3,10 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <fcntl.h>
+#include "dir_flip.h"
 
 const off_t BUFFER_SIZE = 1000;
-const char MY_ERROR = 1;
-const int SYS_ERROR = -1;
+
 
 void reverse_string(char *str, int str_len) 
 {
@@ -66,7 +66,7 @@ char copy_file_reversed(char *src_path, char *dst_path)
         return MY_ERROR;
     }
     off_t size = st.st_size;
-    int dst_file = open(dst_path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    int dst_file = open(dst_path, O_WRONLY | O_CREAT | O_TRUNC, FILE_PERMISSION);
     if (dst_file == SYS_ERROR) {
         perror("Error creating file ");
         fprintf(stderr, "%s\n", dst_path);

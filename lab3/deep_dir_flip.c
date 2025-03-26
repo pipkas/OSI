@@ -62,7 +62,7 @@ char deep_dir_flip(char* cur_dir_path_name, char* flip_dir_path_name)
         return MY_ERROR;
     }
 
-    int is_error = mkdir(flip_dir_path_name, 0755); 
+    int is_error = mkdir(flip_dir_path_name, DIR_PERMISSION); 
     if (is_error != 0 && errno != EEXIST) {
         closedir(open_dir);
         perror("Error creating reversed directory ");
