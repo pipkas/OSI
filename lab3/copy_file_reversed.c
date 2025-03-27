@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include "dir_flip.h"
 
-const off_t BUFFER_SIZE = 1000;
+const off_t BUFFER_SIZE = 1024;
 
 
 void reverse_string(char *str, int str_len) 
@@ -25,19 +25,21 @@ static char reverse_file(int src_file, int dst_file, off_t size)
     while (offset > 0){
         off_t chunk_size;
         chunk_size = (offset >= BUFFER_SIZE) ? BUFFER_SIZE : offset;
-        offset -= chunk_size; //new src file position
-        int is_error = lseek(src_file, offset, SEEK_SET);
-        if (is_error == SYS_ERROR){
-            perror("Error setting cursor in source file\n");
-            return MY_ERROR;
-        }
-
         bytes_read = read(src_file, buffer, chunk_size);
         if (bytes_read == SYS_ERROR) {
             perror("Error reading source file\n");
             return MY_ERROR;
         }
         reverse_string(buffer, bytes_read);
+
+        offset -= bytes_read;
+
+        int is_error = lseek(dst_file, offset, SEEK_SET);
+        if (is_error == SYS_ERROR){
+            perror("Error setting cursor in source file\n");
+            return MY_ERROR;
+        }
+
         writed_bytes = write(dst_file, buffer, bytes_read);
         if (writed_bytes == SYS_ERROR) {
             perror("Error writing in destination file\n");
