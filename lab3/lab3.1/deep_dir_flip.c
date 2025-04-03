@@ -5,6 +5,8 @@
 #include <dirent.h>
 #include "dir_flip.h"
 
+const char* PARENT_DIR = "..";
+const char* CUR_DIR = ".";
 
 void make_flip_dir_path(char* cur_dir_path, char* flip_dir_path)
 {
@@ -71,9 +73,9 @@ char deep_dir_flip(char* cur_dir_path_name, char* flip_dir_path_name)
     }
 
     struct dirent *entry;
-
+    
     while ((entry = readdir(open_dir)) != NULL) {
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+        if (strcmp(entry->d_name, CUR_DIR) == 0 || strcmp(entry->d_name, PARENT_DIR) == 0) {
             continue;
         }
         is_error = flip_element(entry, cur_dir_path_name, flip_dir_path_name);    
