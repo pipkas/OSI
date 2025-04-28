@@ -27,10 +27,11 @@ int main(){
         local_var = 33;
         global_var = 77;
         printf("child process: new value of local var = %d , new value of global var = %d\n", local_var, global_var);
+        getc(stdin);
         _exit(5);
     }
     
-    getc(stdin);
+    
     printf("parent process: value of local var = %d, value of global var = %d\n", local_var, global_var);
     int is_error = wait_and_check();
     if (is_error == ERROR)
