@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-#define BUFFER_SIZE 64
+#define BUFFER_SIZE 512
 #define PORT 8080
 #define ERROR -1
 #define SUCCESS 1
@@ -34,7 +34,7 @@ int main() {
         char* fgets_ret = fgets(buffer, BUFFER_SIZE, stdin);
         if (fgets_ret == NULL) break;
         if (strcmp(buffer, "exit\n") == 0)
-            continue;
+            break;
         ssize_t send_len = sendto(sockfd, buffer, strlen(buffer), 0, (const struct sockaddr *)&server_addr, sizeof(server_addr));
         if (send_len == ERROR) {
             perror("sendto failed\n");
@@ -42,6 +42,7 @@ int main() {
         }
         printf("Message sent to server\n");
         socklen_t server_len = sizeof(server_addr);
+        memset((void*)buffer, 0, BUFFER_SIZE);
         ssize_t recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr*)&server_addr, &server_len);
         if (recv_len == ERROR) {
             perror("recvfrom failed\n");
