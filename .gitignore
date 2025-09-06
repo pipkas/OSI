@@ -1,0 +1,112 @@
+# ================================
+# ИДЕ и редакторы (Visual Studio Code)
+# ================================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/tasks.json
+!..vscode/launch.json
+!.vscode/settings.json
+
+# JetBrains IDE (WebStorm, IntelliJ, PyCharm, etc.)
+.idea/
+*.iml
+*.iws
+
+# ================================
+# Операционные системы
+# ================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+[Tt]humbs.db:encryptable
+ehthumbs.db
+[Dd]esktop.ini
+
+# ================================
+# Языки программирования и среды
+# ================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+*.mo
+
+# Node.js / JavaScript
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+dist/
+build/
+.parcel-cache/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.tsbuildinfo
+.next/
+nuxt.d.ts
+.nuxt/
+.output/
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+
+# Logs
+*.log
+logs/
+
+# ================================
+# Общие артефакты сборки и пакеты
+# ================================
+target/
+build/
+out/
+bin/
+*.exe
+*.dll
+*.obj
+*.o
+
+# ================================
+# Прочее
+# ================================
+*.swp
+*.swo
+*~
+.cache/
+.terraform/
+.venv/
+
+# Файлы пакетных менеджеров (опционально, часто они уже в других секциях)
+package-lock.json  # Обычно его КОММИТЯТ, но иногда игнорируют
+yarn.lock          # Аналогично
