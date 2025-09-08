@@ -32,7 +32,11 @@ void *mythread(void *arg) {
         (void*)(&local), (void*)(&local_const), (void*)(&local_static), (void*)(&global));
     pthread_mutex_unlock(&printf_mutex);
 
-    long unsigned* self_id = (long unsigned*)malloc(sizeof(long));
+    long unsigned* self_id = (long unsigned*)malloc(sizeof(long unsigned));
+    if (self_id == NULL){
+        fprintf(stderr, "Invalid allocation of memmory in function 'mythread'.\n");
+        return NULL;
+    }
     *self_id = pthread_self();
 	return (void*)self_id;
 }
@@ -43,7 +47,7 @@ int main() {
     for(int th_num = 0; th_num < THREADS_COUNT; th_num++){
         int is_err = pthread_create(&tid[th_num], NULL, mythread, NULL);
         if (is_err != SUCCESS) {
-            perror("main thread: bad work with pthread_create().\n");
+            perror("bad work with pthread_create().\n");
             return ERROR;
         }
     }
@@ -52,7 +56,16 @@ int main() {
     
 	for(int th_num = 0; th_num < THREADS_COUNT; th_num++){
         void* thread_result;
-        pthread_join(tid[th_num], &thread_result);
+        int is_err = pthread_join(tid[th_num], &thread_result);
+        if (is_err != SUCCESS) {
+            free((long*)thread_result);
+            perror("bad work with pthread_join().\n");
+            return ERROR;
+        }
+        if (thread_result == NULL){
+            return ERROR;
+        }
+            
         long unsigned result_value = *((long unsigned*)thread_result);
         free((long*)thread_result);
 
