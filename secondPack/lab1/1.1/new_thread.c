@@ -1,4 +1,3 @@
-
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <pthread.h>
@@ -8,7 +7,7 @@
 #include <unistd.h>
 
 void *mythread(void *arg) {
-    (void)arg;
+	(void)arg;
 	printf("mythread [%d %d %d]: Hello from mythread!\n", getpid(), getppid(), gettid());
 	return NULL;
 }
@@ -24,6 +23,8 @@ int main() {
 	    printf("main: pthread_create() failed: %s\n", strerror(err));
 		return -1;
 	}
-
+	pthread_join(tid, NULL);
+	
 	return 0;
 }
+
