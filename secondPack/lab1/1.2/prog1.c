@@ -1,0 +1,38 @@
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <pthread.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdint.h>
+#define SUCCESS 0
+#define ERROR -1
+
+void *mythread(void *arg) {
+	(void)arg;
+	printf("mythread %d: Hello from mythread!\n", gettid());
+	return (void*)42;
+}
+
+int main() {
+	pthread_t tid;
+	void* thread_ret;
+
+	printf("main %d: Hello from main!\n", gettid());
+
+	int is_err = pthread_create(&tid, NULL, mythread, NULL);
+	if (is_err != SUCCESS) {
+		perror("bad work with pthread_create().\n");
+		return ERROR;
+	}
+	is_err = pthread_join(tid, &thread_ret);
+	if (is_err != SUCCESS) {
+		perror("bad work with pthread_join().\n");
+		return ERROR;
+	}
+	printf("mythread returned: %ld\n", (intptr_t)thread_ret);
+
+	return 0;
+}
+
