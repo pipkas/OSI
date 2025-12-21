@@ -11,11 +11,12 @@
 #define ERROR -1
 #define TRUE 1
 #define MAX_MAP_COUNT 65530
+#define TEST_TIME_DURATION 1000
 
 void *mythread(void *arg) {
-	(void)arg;
-	printf("mythread %d: Hello from mythread!\n", gettid());
-	return NULL;
+    (void)arg;
+    printf("mythread %d:\n", gettid());
+    return NULL;
 }
 
 int main() {
@@ -27,23 +28,24 @@ int main() {
     while(TRUE){
         is_err_create = pthread_create(&(tid[count]), NULL, mythread, NULL);
         if (is_err_create != SUCCESS) {
+            perror("bad work with pthread_create().\n");
             break;
         }
         count++;
+        usleep(TEST_TIME_DURATION);
     }
 
     for (int i = 0; i < count; i++){
         int is_err_join = pthread_join(tid[i], NULL);
         if (is_err_join != SUCCESS) {
             perror("bad work with pthread_join().\n");
+            printf("pthread_create() returned %d times SUCCESS\n", count);
             return ERROR;
         }
     }
-
-    printf("pthread_create returned 'SUCCESS' %d times\n", count);
+    printf("pthread_create() returned %d times SUCCESS\n", count);
 
     if(is_err_create != SUCCESS){
-        perror("bad work with pthread_create().\n");
         return ERROR;
     }
 

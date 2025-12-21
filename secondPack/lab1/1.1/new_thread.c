@@ -5,6 +5,8 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <unistd.h>
+#define SUCCESS 0
+#define ERROR -1
 
 void *mythread(void *arg) {
 	(void)arg;
@@ -14,17 +16,20 @@ void *mythread(void *arg) {
 
 int main() {
 	pthread_t tid;
-	int err;
 
 	printf("main [%d %d %d]: Hello from main!\n", getpid(), getppid(), gettid());
 
-	err = pthread_create(&tid, NULL, mythread, NULL);
-	if (err) {
-	    printf("main: pthread_create() failed: %s\n", strerror(err));
-		return -1;
+	int is_err = pthread_create(&tid, NULL, mythread, NULL);
+	if (is_err != SUCCESS) {
+		perror("bad work with pthread_create().\n");
+		return ERROR;
 	}
-	pthread_join(tid, NULL);
-	
+	is_err = pthread_join(tid, NULL);
+	if (is_err != SUCCESS) {
+		perror("bad work with pthread_join().\n");
+		return ERROR;
+	}
+
 	return 0;
 }
 

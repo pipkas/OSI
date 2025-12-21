@@ -14,7 +14,7 @@
 void *mythread(void *arg) {
     (void)arg;
     pthread_detach(pthread_self());
-    printf("mythread %d: Hello from mythread!\n", gettid());
+    printf("mythread %d\n", gettid());
     return NULL;
 }
 
@@ -28,7 +28,8 @@ int main() {
         is_err_create = pthread_create(&tid, NULL, mythread, NULL);
         if (is_err_create != SUCCESS) {
             perror("bad work with pthread_create().\n");
-            printf("pthread_create returned 'SUCCESS' %d times\n", count);
+            sleep(1);
+            printf("pthread_create() returned %d times SUCCESS\n", count);
             return ERROR;
         }
         count++;

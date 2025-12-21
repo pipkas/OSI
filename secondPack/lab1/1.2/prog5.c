@@ -13,7 +13,7 @@
 
 void *mythread(void *arg) {
     (void)arg;
-    printf("mythread %d: Hello from mythread!\n", gettid());
+    printf("mythread %d\n", gettid());
     return NULL;
 }
 
@@ -21,18 +21,27 @@ int main() {
 	pthread_t tid;
     pthread_attr_t attr;
 
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-    int is_err_create;
-    int count = 0;
+    int is_err = pthread_attr_init(&attr);
+    if (is_err != SUCCESS) {
+		perror("bad work with pthread_attr_init().\n");
+		return ERROR;
+	}
+    is_err = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    if (is_err != SUCCESS) {
+        pthread_attr_destroy(&attr);
+		perror("bad work with pthread_attr_setdetachstate().\n");
+		return ERROR;
+	}
 
 	printf("main %d: Hello from main!\n", gettid());
+    int count = 0;
     while(TRUE){
-        is_err_create = pthread_create(&tid, &attr, mythread, NULL);
-        if (is_err_create != SUCCESS) {
+        is_err = pthread_create(&tid, &attr, mythread, NULL);
+        if (is_err != SUCCESS) {
             pthread_attr_destroy(&attr);
             perror("bad work with pthread_create().\n");
-            printf("pthread_create returned 'SUCCESS' %d times\n", count);
+            sleep(1);
+            printf("pthread_create() returned %d times SUCCESS\n", count);
             return ERROR;
         }
         count++;
