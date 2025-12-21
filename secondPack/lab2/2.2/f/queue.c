@@ -103,18 +103,9 @@ int queue_destroy(queue_t *q) {
 
 int queue_add(queue_t *q, int val) {
 
-	qnode_t *new = malloc(sizeof(qnode_t));
-	if (new == NULL) {
-		printf("Cannot allocate memory for new node\n");
-		return FAIL;
-	}
-	new->val = val;
-	new->next = NULL;
-
 	int err = pthread_mutex_lock(&q->lock);
 	if (err != SUCCESS) {
 		perror("queue_add: pthread_mutex_lock failed\n");
-		free(new);
 		return FAIL;
 	}
 	q->add_attempts++;	
@@ -125,9 +116,19 @@ int queue_add(queue_t *q, int val) {
 		err = pthread_mutex_unlock(&q->lock);
 		if (err != SUCCESS)
 			perror("queue_get: pthread_mutex_unlock failed\n");
-		free(new);
         return FAIL;
     }
+
+	qnode_t *new = malloc(sizeof(qnode_t));
+	if (new == NULL) {
+		printf("Cannot allocate memory for new node\n");
+		err = pthread_mutex_unlock(&q->lock);
+		if (err != SUCCESS)
+			perror("queue_get: pthread_mutex_unlock failed\n");
+		return FAIL;
+	}
+	new->val = val;
+	new->next = NULL;
 
     while (q->count == q->max_count) {
         pthread_cond_wait(&q->cond, &q->lock);

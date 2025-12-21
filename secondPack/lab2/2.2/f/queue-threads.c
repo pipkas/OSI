@@ -67,11 +67,11 @@ void *writer(void *arg) {
 		pthread_testcancel();
 		int ok = queue_add(q, i);
 		if (ok != SUCCESS) {
-			//usleep(1);
+			usleep(1);
 			continue;
 		}
 		i++;
-		//usleep(1);
+		usleep(1);
 	}
 
 	return NULL;
@@ -121,16 +121,16 @@ int main() {
 		return ERROR;
 	}
 
-    err = pthread_cancel(writer_tid);
-    if (err != SUCCESS) {
-		perror("main: pthread_cancel() failed\n");
+	err = pthread_join(reader_tid, NULL);
+	if (err != SUCCESS) {
+		perror("main: pthread_join() failed\n");
         queue_destroy(q);
 		return ERROR;
 	}
 
-	err = pthread_join(reader_tid, NULL);
-	if (err != SUCCESS) {
-		perror("main: pthread_join() failed\n");
+    err = pthread_cancel(writer_tid);
+    if (err != SUCCESS) {
+		perror("main: pthread_cancel() failed\n");
         queue_destroy(q);
 		return ERROR;
 	}
