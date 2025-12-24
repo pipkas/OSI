@@ -18,6 +18,8 @@
 #define BUFFER_SIZE 8192
 #define MAX_RETRIES 10
 #define NULL_TERM_SIZE 1
+#define CUR_DIR "."
+#define PARENT_DIR ".."
 
 typedef struct {
     char src_path[PATH_MAX];

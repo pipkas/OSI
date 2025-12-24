@@ -110,7 +110,7 @@ void *work_dir_thread(void* arg) {
             err = SUCCESS;
             break; 
         }                
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+        if (strcmp(entry->d_name, CUR_DIR) == 0 || strcmp(entry->d_name, PARENT_DIR) == 0) {
             continue;
         }
         err = process_entry(task->src_path, task->dst_path, entry->d_name);
