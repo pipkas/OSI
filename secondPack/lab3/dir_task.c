@@ -70,27 +70,11 @@ int create_dir(const char* src_path, const char* dst_path) {
         return ERROR;
     }
 
-    err = pthread_mutex_lock(&dir_mutex);
-    if (err != SUCCESS) {
-        printf("create_dir: pthread_mutex_lock() failed: %s\n", strerror(err));
-        return ERROR;
-    }
-
     err = mkdir(dst_path, src_stat.st_mode);
     if (err != SUCCESS && errno != EEXIST) {
         printf("create_dir: mkdir() failed for %s: %s\n", src_path, strerror(errno));
-        err = pthread_mutex_unlock(&dir_mutex);
-        if (err != SUCCESS) {
-            printf("create_dir: pthread_mutex_unlock() failed: %s\n", strerror(err));
-        }
         return ERROR;
     } 
-
-    err = pthread_mutex_unlock(&dir_mutex);
-    if (err != SUCCESS) {
-        printf("create_dir: pthread_mutex_unlock() failed: %s\n", strerror(err));
-        return ERROR;
-    }    
     return SUCCESS;
 }
 
