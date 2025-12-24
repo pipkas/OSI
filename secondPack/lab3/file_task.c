@@ -58,7 +58,7 @@ void *copy_file_thread(void* arg) {
         if (bytes_read == 0) {
             break;  
         }
-        
+
         int write_error = 0;
         ssize_t total_written = 0;
         char* ptr = buffer;
@@ -99,9 +99,11 @@ int create_file_task(const char* src_path, const char* dst_path) {
     strcpy(task->src_path, src_path);
     strcpy(task->dst_path, dst_path);    
     
+    int retries = 0;
     err = pthread_create(&thread, NULL, copy_file_thread, task);
-    while (err == EAGAIN){
+    while (err == EAGAIN && retries < MAX_RETRIES){
         sleep(1);
+        retries++;
         err = pthread_create(&thread, NULL, copy_file_thread, task);
     }
 	if (err != SUCCESS) {

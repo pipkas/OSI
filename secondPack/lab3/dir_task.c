@@ -140,9 +140,11 @@ int create_dir_task(const char* src_path, const char* dst_path) {
     strcpy(task->src_path, src_path);
     strcpy(task->dst_path, dst_path);        
     
+    int retries = 0;
     err = pthread_create(&thread, NULL, work_dir_thread, task);
-    while (err == EAGAIN){
+    while (err == EAGAIN && retries < MAX_RETRIES){
         sleep(1);
+        retries++;
         err = pthread_create(&thread, NULL, work_dir_thread, task);
     }
 	if (err != SUCCESS) {
