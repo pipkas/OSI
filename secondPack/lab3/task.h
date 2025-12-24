@@ -27,5 +27,5 @@ typedef struct {
 extern pthread_mutex_t dir_mutex;
 
 int create_file_task(const char* src_path, const char* dst_path);
-int create_directory_task(const char* src_path, const char* dst_path);
-void *work_directory_thread(void* arg);
+int create_dir_task(const char* src_path, const char* dst_path);
+void *work_dir_thread(void* arg);

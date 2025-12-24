@@ -9,29 +9,29 @@ int make_path(char* path, size_t size, const char* dir, const char* name) {
 }
 
 
-int process_single_entry(const char* src_dir, const char* dst_dir, const char* entry_name) {
+int process_entry(const char* src_dir, const char* dst_dir, const char* entry_name) {
     int err;
     char src_path[PATH_MAX];
     char dst_path[PATH_MAX];
     struct stat stat_buf;
     err = make_path(src_path, sizeof(src_path), src_dir, entry_name);
     if (err != SUCCESS) {
-        printf("process_single_entry: source path too long: %s/%s\n", src_dir, entry_name);
+        printf("process_entry: source path too long: %s/%s\n", src_dir, entry_name);
         return ERROR;
     }    
     err = make_path(dst_path, sizeof(dst_path), dst_dir, entry_name);
     if (err != SUCCESS) {
-        printf("process_single_entry: destination path too long: %s/%s\n", dst_dir, entry_name);
+        printf("process_entry: destination path too long: %s/%s\n", dst_dir, entry_name);
         return ERROR;
     }
 
     err = lstat(src_path, &stat_buf);
     if (err != SUCCESS) {
-        printf("process_single_entry: lstat() failed for %s: %s\n", src_path, strerror(errno));
+        printf("process_entry: lstat() failed for %s: %s\n", src_path, strerror(errno));
         return ERROR;
     }
     if (S_ISDIR(stat_buf.st_mode)) {
-        return create_directory_task(src_path, dst_path);
+        return create_dir_task(src_path, dst_path);
     }
     if (S_ISREG(stat_buf.st_mode)) {
         return create_file_task(src_path, dst_path);
@@ -80,19 +80,19 @@ int create_dir(const char* src_path, const char* dst_path) {
 
 
 
-void *work_directory_thread(void* arg) {
+void *work_dir_thread(void* arg) {
     int err;
     task_t* task = (task_t*)arg;
     err = create_dir(task->src_path, task->dst_path);
     if (err != SUCCESS) {
-        printf("work_directory_thread: failed to create directory %s\n", task->dst_path);
+        printf("work_dir_thread: failed to create directory %s\n", task->dst_path);
         free(task);
         return NULL;
     }    
 
     DIR* dir = opendir_with_retry(task->src_path);
     if (dir == NULL) {
-        printf("work_directory_thread: failed to open directory %s\n", task->src_path);
+        printf("work_dir_thread: failed to open directory %s\n", task->src_path);
         free(task);
         return NULL;
     }
@@ -102,7 +102,7 @@ void *work_directory_thread(void* arg) {
         errno = SUCCESS;
         entry = readdir(dir); 
         if (entry == NULL && errno != SUCCESS) {
-            printf("work_directory_thread: readdir error: %s\n", strerror(errno));
+            printf("work_dir_thread: readdir error: %s\n", strerror(errno));
             err = ERROR;
             break;
         }   
@@ -113,15 +113,15 @@ void *work_directory_thread(void* arg) {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
             continue;
         }
-        err = process_single_entry(task->src_path, task->dst_path, entry->d_name);
+        err = process_entry(task->src_path, task->dst_path, entry->d_name);
         if (err != SUCCESS) {
-            printf("work_directory_thread: failed to add task for %s\n", entry->d_name);
+            printf("work_dir_thread: failed to add task for %s\n", entry->d_name);
             break;
         }
     } 
     err = closedir(dir);
     if (err != SUCCESS) {
-        printf("work_directory_thread: closedir() failed: %s\n", strerror(errno));
+        printf("work_dir_thread: closedir() failed: %s\n", strerror(errno));
     }    
     free(task);
     return NULL;
@@ -129,30 +129,30 @@ void *work_directory_thread(void* arg) {
 
 
 
-int create_directory_task(const char* src_path, const char* dst_path) {
+int create_dir_task(const char* src_path, const char* dst_path) {
     int err;
     pthread_t thread;
     task_t* task = malloc(sizeof(task_t));
     if (task == NULL) {
-        printf("create_directory_task: memory allocation failed\n");
+        printf("create_dir_task: memory allocation failed\n");
         return ERROR;
     }  
     strcpy(task->src_path, src_path);
     strcpy(task->dst_path, dst_path);        
     
-    err = pthread_create(&thread, NULL, work_directory_thread, task);
+    err = pthread_create(&thread, NULL, work_dir_thread, task);
     while (err == EAGAIN){
         sleep(1);
-        err = pthread_create(&thread, NULL, work_directory_thread, task);
+        err = pthread_create(&thread, NULL, work_dir_thread, task);
     }
 	if (err != SUCCESS) {
-		printf("create_directory_task: pthread_create() failed: %s\n", strerror(err));
+		printf("create_dir_task: pthread_create() failed: %s\n", strerror(err));
         free(task);
 		return ERROR;
 	}
     err = pthread_detach(thread);
     if (err != SUCCESS) {
-        printf("create_directory_task: pthread_detach() failed: %s\n", strerror(err));
+        printf("create_dir_task: pthread_detach() failed: %s\n", strerror(err));
     }    
     return SUCCESS;
 }

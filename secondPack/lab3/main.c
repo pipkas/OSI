@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
     strcpy(task->src_path, argv[1]);
     strcpy(task->dst_path, argv[2]);
     
-    err = pthread_create(&main_thread, NULL, work_directory_thread, task);
+    err = pthread_create(&main_thread, NULL, work_dir_thread, task);
 	if (err != SUCCESS) {
 		printf("main: pthread_create() failed: %s\n", strerror(err));
         free(task);
@@ -37,6 +37,5 @@ int main(int argc, char* argv[]) {
 		printf("main: pthread_join() failed: %s\n", strerror(err));
 		return ERROR;
 	}
-    sleep(2);
-    return SUCCESS;
+    pthread_exit(NULL);
 }
